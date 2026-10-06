@@ -18,7 +18,7 @@ export async function initDb(db:SQLite.SQLiteDatabase) {
     CREATE TABLE IF NOT EXISTS collections (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
-      created_at TEXT NOT NULL
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
 
     CREATE TABLE IF NOT EXISTS plants (
@@ -31,7 +31,7 @@ export async function initDb(db:SQLite.SQLiteDatabase) {
       collection INTEGER NOT NULL,
       FOREIGN KEY (species) REFERENCES plant_catalogue(id),
       FOREIGN KEY (collection) REFERENCES collections(id) ON UPDATE CASCADE,
-      created_at TEXT NOT NULL
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
 
     CREATE TABLE IF NOT EXISTS care_logs (
@@ -40,7 +40,7 @@ export async function initDb(db:SQLite.SQLiteDatabase) {
         date TEXT,
         actions TEXT,
         FOREIGN KEY (plant) REFERENCES plants(id) ON DELETE CASCADE,
-        created_at TEXT NOT NULL
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
     `);
 }
@@ -67,13 +67,10 @@ export async function seedDb(db:SQLite.SQLiteDatabase) {
             for (const key in catalogue){
                 for(const care_key in carereqs)
                     if(carereqs[care_key].species === catalogue[key].species){
-                        await db.runAsync('INSERT INTO plant_catalogue (species, common_name, position, water_schedule, moisture) VALUES (?,?,?,?,?)',catalogue[key].species, catalogue[key].common_name, carereqs[key].position, carereqs[key].water_schedule, carereqs[key].water_schedule)}
+                        await db.runAsync('INSERT INTO plant_catalogue (species, common_name, position, water_schedule, moisture) VALUES (?,?,?,?,?)',catalogue[key].species, catalogue[key].common_name, carereqs[care_key].position, carereqs[care_key].water_schedule, carereqs[care_key].moisture)}
             }
         })
-        
-            
-    }else if( catalogRow == null || catalogRow.count == null)
-        return new Error('No catalog table!')
+    }   
 
     
 }

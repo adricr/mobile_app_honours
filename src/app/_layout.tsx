@@ -1,7 +1,9 @@
 import { db, initDb, seedDb } from "@/data/database";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect, useState } from "react";
+
 SplashScreen.preventAutoHideAsync()
+
 export default function RootLayout() {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState<Error | null>(null);
