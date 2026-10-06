@@ -1,0 +1,68 @@
+[
+  {
+    "species": "Ficus Lyrata",
+    "position": "partial shade",
+    "water_schedule": 7,
+    "moisture": "moderate"
+  },
+  {
+    "species": "Monstera Deliciosa",
+    "position": "partial shade",
+    "water_schedule": 7,
+    "moisture": "moderate"
+  },
+  {
+    "species": "Epipremnum aureum",
+    "position": "partial shade",
+    "water_schedule": 10,
+    "moisture": "low"
+  },
+  {
+    "species": "Kalanchoe Blossfeldiana",
+    "position": "full sun",
+    "water_schedule": 12,
+    "moisture": "low"
+  },
+  {
+    "species": "Tradescantia pallida",
+    "position": "full sun",
+    "water_schedule": 7,
+    "moisture": "low"
+  },
+  {
+    "species": "Ocimum basilicum",
+    "position": "full sun",
+    "water_schedule": 2,
+    "moisture": "high"
+  },
+  {
+    "species": "Crassula Ovata",
+    "position": "full sun",
+    "water_schedule": 14,
+    "moisture": "low"
+  },
+  {
+    "species": "Spathiphyllum wallisii",
+    "position": "shade",
+    "water_schedule": 6,
+    "moisture": "high"
+  },
+  {
+    "species": "Haworthiopsis attenuata",
+    "position": "partial shade",
+    "water_schedule": 14,
+    "moisture": "low"
+  },
+  {
+    "species": "Echeveria Elegans",
+    "position": "full sun",
+    "water_schedule": 14,
+    "moisture": "low"
+  },
+  {
+    "species": "Solanum lycopersicum L.",
+    "position": "full sun",
+    "water_schedule": 2,
+    "moisture": "high"
+  }
+]

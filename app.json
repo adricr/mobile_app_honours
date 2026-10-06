@@ -8,7 +8,8 @@
     "scheme": "plantcare",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.anonymous.PlantCare"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,15 +26,8 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "backgroundColor": "#208AEF",
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
-        }
-      ]
+      "@react-native-vector-icons/ionicons",
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true,
