@@ -27,11 +27,13 @@ export async function initDb(db:SQLite.SQLiteDatabase) {
       species INTEGER NOT NULL,
       photo_uri TEXT,
       care_requirements TEXT,
+      care_recommendations TEXT,
       care_log TEXT,
       collection INTEGER NOT NULL,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (species) REFERENCES plant_catalogue(id),
-      FOREIGN KEY (collection) REFERENCES collections(id) ON UPDATE CASCADE,
-      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+      FOREIGN KEY (collection) REFERENCES collections(id) ON UPDATE CASCADE
+      
     );
 
     CREATE TABLE IF NOT EXISTS care_logs (
@@ -39,8 +41,9 @@ export async function initDb(db:SQLite.SQLiteDatabase) {
         plant INTEGER NOT NULL,
         date TEXT,
         actions TEXT,
-        FOREIGN KEY (plant) REFERENCES plants(id) ON DELETE CASCADE,
-        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (plant) REFERENCES plants(id) ON DELETE CASCADE
+        
     );
     `);
 }
