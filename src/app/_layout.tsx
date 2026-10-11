@@ -13,16 +13,11 @@ SplashScreen.preventAutoHideAsync()
 export default function RootLayout() {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-
+  
   useEffect(() => {
     async function setup() {
-      try {
-        await seedDb(db)
-      } catch {
-        // tables don't exist yet; if init or the retry fails, the error goes to .catch below
-        await initDb(db)
-        await seedDb(db)
-      }
+      await initDb(db)
+      await seedDb(db)
     }
     setup()
       .then(() => setReady(true))
@@ -54,8 +49,8 @@ export default function RootLayout() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <GluestackUIProvider mode="dark">
           <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-    </Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
         </GluestackUIProvider>
       </GestureHandlerRootView>
     </SafeAreaListener>

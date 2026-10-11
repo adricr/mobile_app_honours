@@ -19,10 +19,11 @@ export type Plant = {
     created_at: string;
 };
 
-export async function createPlant(name: string, species : string, photo_uri: string | null, care_requirements: CareReq | null, care_recommendations: CareReq | null, collection: number ) : Promise<SQLiteRunResult | null> {
+export async function createPlant(name: string, species : number, photo_uri: string | null, care_requirements: CareReq | null, care_recommendations: CareReq | null, current_status:CareReq, collection: number ) : Promise<SQLiteRunResult | null> {
     return db.runAsync(`
-        INSERT INTO plants (name, species, photo_uri, care_requirements, care_recommendations, collection) VALUES (?,?,?,?,?,?)`
-        , name, species, photo_uri, JSON.stringify(care_requirements), JSON.stringify(care_recommendations), collection
+        INSERT INTO plants (name, species, photo_uri, care_requirements, care_recommendations, current_status, collection) VALUES (?,?,?,?,?,?,?)`
+        , name, species, photo_uri,care_requirements ? JSON.stringify(care_requirements):null, care_recommendations ? JSON.stringify(care_recommendations) : null
+, JSON.stringify(current_status), collection
     )
 }
 

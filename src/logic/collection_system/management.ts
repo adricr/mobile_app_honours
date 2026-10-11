@@ -1,4 +1,4 @@
-import { createCollection, getAllCollections } from "@/src/data/repositories/collections";
+import { createCollection, getAllCollections, getCollection } from "@/src/data/repositories/collections";
 
 export type SubmissionStatus = {
     status: boolean;
@@ -28,6 +28,16 @@ export async function handleCollectionCreation(rawName:string): Promise<Submissi
 export async function handleCollectionGetAll(){
    try{
     const result = await getAllCollections()
+    return result
+   } catch(e){
+    console.error(e)
+    return null
+   }
+}
+
+export async function handleCollectionGet(id:number){
+   try{
+    const result = await getCollection(id)
     return result
    } catch(e){
     console.error(e)

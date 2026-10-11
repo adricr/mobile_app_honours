@@ -1,5 +1,5 @@
 import carereqs from '@/src/data/seed/care_requirements.json';
-import catalogue from '@/src/logic/id_system/labels.json';
+import catalogue from '@/src/logic/plants/id_system/labels.json';
 import * as SQLite from 'expo-sqlite';
 export const db = SQLite.openDatabaseSync("plantcare.db")
 export async function initDb(db:SQLite.SQLiteDatabase) {
@@ -11,8 +11,7 @@ export async function initDb(db:SQLite.SQLiteDatabase) {
         species TEXT NOT NULL UNIQUE,
         common_name TEXT,
         position TEXT,
-        water_schedule INTEGER,
-        moisture TEXT
+        water_schedule INTEGER
     );
 
     CREATE TABLE IF NOT EXISTS collections (
@@ -28,6 +27,7 @@ export async function initDb(db:SQLite.SQLiteDatabase) {
       photo_uri TEXT,
       care_requirements TEXT,
       care_recommendations TEXT,
+      current_status TEXT,
       care_log TEXT,
       collection INTEGER NOT NULL,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -70,7 +70,7 @@ export async function seedDb(db:SQLite.SQLiteDatabase) {
             for (const key in catalogue){
                 for(const care_key in carereqs)
                     if(carereqs[care_key].species === catalogue[key].species){
-                        await db.runAsync('INSERT INTO plant_catalogue (species, common_name, position, water_schedule, moisture) VALUES (?,?,?,?,?)',catalogue[key].species, catalogue[key].common_name, carereqs[care_key].position, carereqs[care_key].water_schedule, carereqs[care_key].moisture)}
+                        await db.runAsync('INSERT INTO plant_catalogue (species, common_name, position, water_schedule) VALUES (?,?,?,?)',catalogue[key].species, catalogue[key].common_name, carereqs[care_key].position, carereqs[care_key].water_schedule)}
             }
         })
     }   

@@ -34,9 +34,11 @@ export default function TabLayout() {
        }} 
        />
         <Tabs.Screen 
-            name="plants" 
-            options={{ 
+            name="collections" 
+            options={{
                 title: 'Plants',
+                // the collections stack draws its own header (with the back button)
+                headerShown: false,
                 tabBarIcon: ({color, focused}) =>(
                     <Ionicons name={focused ? 'leaf-sharp' : 'leaf-outline'} color={color} size={24}/>
                 ),
