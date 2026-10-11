@@ -14,7 +14,7 @@ export async function createCollection(name: string) : Promise<SQLiteRunResult |
     )
 }
 
-export async function getAllCollections() : Promise<Array<Collection> | null> {
+export async function getAllCollections() : Promise<Collection[]> {
     return db.getAllAsync<Collection>(`SELECT id, name, created_at FROM collections ORDER BY name`)
 }
 

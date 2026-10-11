@@ -1,5 +1,5 @@
-import carereqs from '@/data/seed/care_requirements.json';
-import catalogue from '@/logic/id_system/labels.json';
+import carereqs from '@/src/data/seed/care_requirements.json';
+import catalogue from '@/src/logic/id_system/labels.json';
 import * as SQLite from 'expo-sqlite';
 export const db = SQLite.openDatabaseSync("plantcare.db")
 export async function initDb(db:SQLite.SQLiteDatabase) {

@@ -40,7 +40,7 @@ export default function TabLayout() {
                 tabBarIcon: ({color, focused}) =>(
                     <Ionicons name={focused ? 'leaf-sharp' : 'leaf-outline'} color={color} size={24}/>
                 ),
-       }} 
+                }} 
        />
     </Tabs>
   );
