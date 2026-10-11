@@ -45,7 +45,7 @@ export async function getCareReq(species:string): Promise<CareReq | null> {
     // }
 }
 
-export async function getAllCareReq(): Promise<Array<CareReq> | null > {
+export async function getAllCareReq(): Promise<Array<CatalogueEntry> | null > {
     return db.getAllAsync('SELECT species, position, water_schedule FROM plant_catalogue')
 }
 

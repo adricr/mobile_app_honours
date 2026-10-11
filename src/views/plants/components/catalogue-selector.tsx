@@ -9,17 +9,16 @@ import {
     SelectScrollView,
     SelectTrigger
 } from '@/components/ui/select';
-import { CareReq } from "@/src/data/repositories/plant-knowledge";
+import { CatalogueEntry } from "@/src/data/repositories/plant-knowledge";
 import Ionicons from '@react-native-vector-icons/ionicons/static';
 import { View } from "react-native";
 type SelectorInput = {
     setPlantSpeciesName: (species: string | null) => void,
     plantSpeciesName: string | null,
-    catalogue: CareReq[] | null
+    catalogue: CatalogueEntry[] | null
 }
 export default function CatalogueSelector({setPlantSpeciesName, plantSpeciesName, catalogue}:SelectorInput){
-    let catalogueSelectItems
-    catalogueSelectItems = catalogue.map(plant => {
+    let catalogueSelectItems = catalogue?.map(plant => {
         
         return(
             <SelectItem 

@@ -3,7 +3,7 @@ import { FormControl, FormControlError, FormControlErrorText, FormControlLabel, 
 import { Input, InputField } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
-import { CareReq } from "@/src/data/repositories/plant-knowledge";
+import { CatalogueEntry } from "@/src/data/repositories/plant-knowledge";
 import { handlePlantCatalogueGetAll, handlePlantCreation, NewPlantInfo } from "@/src/logic/plants/management";
 import Ionicons from "@react-native-vector-icons/ionicons/static";
 import { useEffect, useState } from "react";
@@ -32,7 +32,7 @@ function emptyPlantInfo(collectionId: number): NewPlantInfo {
 export default function AddPlant({collectionId, setSubmitted, onCreated}:AddPlantProps){
     const [isInvalid, setisInvalid] = useState(false);
     const [errorText,setErrorText] = useState("")
-    const [plantCatalogue, setPlantCatalogue] = useState<CareReq[] | null>([])
+    const [plantCatalogue, setPlantCatalogue] = useState<CatalogueEntry[] | null>([])
     // what's picked in the dropdown; the species itself is kept in plantInfoToSend
     const [newPlantSpeciesName, setNewPlantSpeciesName] = useState<string | null>(null)
     const [identifiedWithCamera,setIdentifiedWithCamera] = useState<boolean>(false)
