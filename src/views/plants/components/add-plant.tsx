@@ -5,15 +5,17 @@ import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { CatalogueEntry } from "@/src/data/repositories/plant-knowledge";
 import { handlePlantCatalogueGetAll, handlePlantCreation, NewPlantInfo } from "@/src/logic/plants/management";
+import { usePlantDraft } from "@/src/logic/plants/plant-draft-context";
 import Ionicons from "@react-native-vector-icons/ionicons/static";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import CatalogueSelector from "./catalogue-selector";
 type AddPlantProps ={
     collectionId: number
     setSubmitted: (submitted: boolean) => void
     onCreated: () => void
+    setModalOn: (modalOn: boolean)=> void
 };
-
 const POSITIONS = ["full sun", "partial shade", "shade"]
 // pages: 0 species, 1 name, 2 last watered, 3 position, 4 summary + submit
 const LAST_PAGE = 4
@@ -29,15 +31,21 @@ function emptyPlantInfo(collectionId: number): NewPlantInfo {
     }
 }
 
-export default function AddPlant({collectionId, setSubmitted, onCreated}:AddPlantProps){
+export default function AddPlant({collectionId, setSubmitted, onCreated, setModalOn}:AddPlantProps){
     const [isInvalid, setisInvalid] = useState(false);
     const [errorText,setErrorText] = useState("")
     const [plantCatalogue, setPlantCatalogue] = useState<CatalogueEntry[] | null>([])
     // what's picked in the dropdown; the species itself is kept in plantInfoToSend
-    const [newPlantSpeciesName, setNewPlantSpeciesName] = useState<string | null>(null)
+    const plantDraft = usePlantDraft()
+    const [newPlantSpeciesName, setNewPlantSpeciesName] = useState<string | null>(plantDraft.identifiedSpecies)
     const [identifiedWithCamera,setIdentifiedWithCamera] = useState<boolean>(false)
     const [formPage, setFormPage] = useState<number>(0)
-    const [plantInfoToSend, setPlantInfoToSend] = useState<NewPlantInfo>(emptyPlantInfo(collectionId));
+    const [plantInfoToSend, setPlantInfoToSend] = useState<NewPlantInfo>(
+    plantDraft.draft
+        ? { ...plantDraft.draft, photo_uri: plantDraft.photoUri }
+        : emptyPlantInfo(collectionId)
+    )
+    
     let currentPage: React.ReactNode
     useEffect(()=>{
         handlePlantCatalogueGetAll().then(setPlantCatalogue).catch(console.error)
@@ -77,7 +85,12 @@ export default function AddPlant({collectionId, setSubmitted, onCreated}:AddPlan
                             />
                         </Input>)}
                     <Text bold={true} size="xl" className="text-center my-2">OR</Text>
-                    <Button>
+                    <Button onPress={()=>{
+                        plantDraft.setFormPage(formPage)
+                        plantDraft.setDraft(plantInfoToSend)
+                        setModalOn(false);
+                        router.push('/camera',)
+                        }}>
                         <ButtonText>Take a picture</ButtonText>
                         <Ionicons size={16} name="camera-sharp"></Ionicons>
                     </Button>

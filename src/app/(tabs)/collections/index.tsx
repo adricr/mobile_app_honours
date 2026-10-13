@@ -17,7 +17,7 @@ export default function Index() {
 
   useEffect(() => { loadCollections() }, [loadCollections])
   return(
-    <View style={styles.container}>
+    <View className="bg-[#032601] flex flex-2 items-center">
       <CreateModal itemType="collection" modalOn={createCollection} setModalOn={setCreateCollection} onCreated={loadCollections} />
       <ContentList contentArray={collections} contentType="collection"></ContentList>
       <ButtonGroup className="m-5 size-max">

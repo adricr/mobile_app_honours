@@ -5,6 +5,7 @@ import { Collection } from "@/src/data/repositories/collections";
 import { Plant } from "@/src/data/repositories/plants";
 import { handleCollectionGet } from "@/src/logic/collection_system/management";
 import { handlePlantGetAll } from "@/src/logic/plants/management";
+import { usePlantDraft } from "@/src/logic/plants/plant-draft-context";
 import Ionicons from "@react-native-vector-icons/ionicons/static";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
@@ -12,6 +13,7 @@ import { StyleSheet, View } from "react-native";
 
 export default function CollectionScreen() {
   // route params always arrive as strings
+  const plantDraft = usePlantDraft()
   const { id } = useLocalSearchParams<{ id: string }>()
   const [collection, setCollection] = useState<Collection | null>(null)
   const [plants, setPlants] = useState<Plant[]>([])

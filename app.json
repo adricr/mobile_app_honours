@@ -27,7 +27,9 @@
     },
     "plugins": [
       "@react-native-vector-icons/ionicons",
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-image",
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true,

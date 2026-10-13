@@ -19,7 +19,7 @@ export default function ContentList({contentArray, contentType}:ContentListType)
         if (contentType === 'collection'){
             listItems = contentArray.map( item => {
                 return(
-                    <ButtonGroup className="flex flex-row justify-between" key={item.id}>
+                    <ButtonGroup className="flex flex-row justify-center" key={item.id}>
                         <Button
                             variant="ghost"
                             className="basis-3/4 justify-start bg-accent"
@@ -33,10 +33,20 @@ export default function ContentList({contentArray, contentType}:ContentListType)
 
             })
 
-        } else {
+        } else{
             listItems = contentArray.map( item => {
                 return(
-                    <Text key={item.id}>{item.name}</Text>
+                    <ButtonGroup className="flex flex-row justify-center" key={item.id}>
+                        <Button
+                            variant="ghost"
+                            className="basis-3/4 justify-start bg-accent"
+                            onPress={() => router.push({ pathname: '/collections/[id]', params: { id: String(item.id) } })}
+                        >
+                            <ButtonText>{item.species}</ButtonText>
+                            <ButtonText>{item.name}</ButtonText>
+                        </Button>
+                        <Button variant="destructive" className="basis-1/4"><Ionicons size={16} name="trash-sharp"></Ionicons></Button>
+                    </ButtonGroup>
                 );
             })
         }
