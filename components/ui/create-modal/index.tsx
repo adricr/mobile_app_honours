@@ -47,7 +47,7 @@ export default function CreateModal({itemType, modalOn, setModalOn, onCreated, c
     }
     if (itemType ==="plant"){
       console.log(draftPlant)
-      if( draftPlant.draft != null && draftPlant.identifiedSpecies != null){
+      if( draftPlant.draft?.species != null && draftPlant.identifiedSpecies != null){
         setModalOn(true)
       }
       return(

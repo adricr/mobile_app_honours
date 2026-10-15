@@ -1,6 +1,5 @@
 import { Button, ButtonGroup, ButtonText } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { loadLocalModel } from "@/src/logic/plants/id_system/id_plant";
 import { usePlantDraft } from "@/src/logic/plants/plant-draft-context";
 import IdentifyView from "@/src/views/plants/identify";
 import Ionicons from "@react-native-vector-icons/ionicons/static";
@@ -10,7 +9,7 @@ import {
 } from "expo-camera";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Classifier } from "react-native-executorch";
 
@@ -22,6 +21,7 @@ export default function Camera() {
   const [classifier, setClassifier] = useState<Classifier<string> | null>(null)
   const [identifyPicture, setIdentifyPicture] = useState<boolean>(false)
   const plantDraft = usePlantDraft()
+  
   if (!permission) {
     return null;
   }
@@ -56,7 +56,7 @@ export default function Camera() {
           style={{ width: "150%", aspectRatio: 1 }}
         />
        { identifyPicture ? (
-        <IdentifyView uri={uri} onBack={()=>{setIdentifyPicture(false)}} />
+        <IdentifyView uri={uri} onBack={()=>{setIdentifyPicture(false)}} setSpecies={plantDraft.setIdentifiedSpecies} />
         ):(
           <ButtonGroup className="flex my-5  w-2/3">
             <Button className="bg-green-600 rounded-3xl flex flex-row" onPress={()=>{
@@ -68,7 +68,7 @@ export default function Camera() {
                 <Ionicons name="search-sharp" size={16}/>
             </Button>
             <Button className=" rounded-3xl" onPress={() => setIdentifyPicture(false)}>
-                <ButtonText>Save</ButtonText>
+                <ButtonText>Save Picture</ButtonText>
                 <Ionicons name="file-tray-sharp" size={16}/>
             </Button>
             <Button className=" rounded-3xl" onPress={() => {
@@ -77,6 +77,17 @@ export default function Camera() {
               }}>
                 <ButtonText>Retry</ButtonText>
                 <Ionicons name="refresh-sharp" size={16}/>
+            </Button>
+            <Button className=" rounded-3xl" onPress={() => {
+              setIdentifyPicture(false)
+              setUri(null)
+              if (plantDraft.draft && plantDraft.identifiedSpecies) {
+                plantDraft.setDraft({ ...plantDraft.draft, species: plantDraft.identifiedSpecies })
+              }
+              router.back()
+              }}>
+                <ButtonText>Exit</ButtonText>
+                <Ionicons name="exit-sharp" size={16}/>
             </Button>
         </ButtonGroup>
         )
@@ -121,20 +132,6 @@ export default function Camera() {
     );
   };
 
-  const identifyPic = ()=>{
-    useEffect(()=>{loadLocalModel().then(setClassifier).catch(console.error)},[])
-    return(
-      <View>
-        <Button onPress={()=>{
-          setIdentifyPicture(false)
-          classifier?.dispose()
-          }}><ButtonText>Back to normal</ButtonText></Button>
-      </View>
-    );
-  }
-  async function loadModel():Promise<Classifier<string>>{
-    return await loadLocalModel();
-  }
 
   return (
     <View style={styles.container}>

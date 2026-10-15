@@ -1,10 +1,10 @@
 import { Asset } from 'expo-asset';
-import { Classifier, ClassifierModel, ClassifierOptions, createClassifier } from 'react-native-executorch';
+import { File } from 'expo-file-system';
+import { ImageManipulator } from 'expo-image-manipulator';
+import * as jpeg_js from 'jpeg-js';
+import { Classification, Classifier, ClassifierModel, ClassifierOptions, createClassifier } from 'react-native-executorch';
+import { ImageBuffer } from 'react-native-executorch/cv';
 import labelsArray from './labels.json';
-export type InferOutput = {
-  label: number,
-  confidence: number
-}
 
 const MEAN = [0.485, 0.456, 0.406];
 const STD = [0.229, 0.224, 0.225];
@@ -33,21 +33,91 @@ export async function loadLocalModel(): Promise<Classifier<string>>{
 }
 
 
-// export function inferImage(imagePath: string, model: Classifier<string>):InferOutput{
-// const tInput = tensor('float32', [1, 3, 224, 224]);
-// const tOutput = tensor('float32', [1, 11]);
-// image
-// try {
-//   tInput.setData(image);
+export async function inferImage(imagePath: string, model: Classifier<string>):Promise<Classification<string>[]>{
 
-//   const outputs = model.execute('forward', [tInput], [tOutput]);
-//   // outputs[0] is tOutput, now filled with logits.
-//   // Any non-tensor return values (numbers, booleans, strings) appear here too.
+const image = await loadImage(imagePath)
+  return model.classify(image,{
+    topk: 1
+  });
+}
 
-//   const logits = tOutput.getData(new Float32Array(tOutput.numel));
-// } finally {
-//   tInput.dispose();
-//   tOutput.dispose();
+export async function loadImage(imagePath:string):Promise<ImageBuffer>{
+  const RESIZE_SIZE = 256;
+  const CROP_SIZE = 224;
+  
+  let image = await ImageManipulator.manipulate(imagePath).renderAsync()
+
+  // shrink by half until within 2x of the target: each 1/2 step averages 2x2 pixels,
+  // so no detail is skipped (Android's bilinear resize doesn't antialias big reductions)
+  while (image.width / 2 >= RESIZE_SIZE) {
+      image = await ImageManipulator.manipulate(image)
+          .resize({ width: Math.round(image.width / 2) })
+          .renderAsync()
+  }
+
+  // final Resize(256) + CenterCrop(224), now a small (< 2x) reduction
+  const factor = RESIZE_SIZE / image.width
+  const transformed = await ImageManipulator.manipulate(image)
+      .resize({ width: RESIZE_SIZE })
+      .crop({
+          originX: (RESIZE_SIZE - CROP_SIZE) / 2,
+          originY: Math.round((image.height * factor - CROP_SIZE) / 2),
+          width: CROP_SIZE,
+          height: CROP_SIZE,
+      })
+      .renderAsync()
+
+  const saved = await transformed.saveAsync({ compress: 1 })
+  const inInt8 = await new File(saved.uri).bytes()
+  const rawData = jpeg_js.decode(inInt8,{useTArray: true, formatAsRGBA: false})
+  const inImageBuffer:ImageBuffer = {
+    data: rawData.data,
+    width: CROP_SIZE,
+    height: CROP_SIZE,
+    format: 'rgb',
+    layout: 'hwc'
+  }
+
+  return inImageBuffer
+}
+
+// export async function loadImageTest(imagePath:string):Promise<string>{
+
+//     const RESIZE_SIZE = 256;
+//     const CROP_SIZE = 224;
+    
+//     let image = await ImageManipulator.manipulate(imagePath).renderAsync()
+
+//     // shrink by half until within 2x of the target: each 1/2 step averages 2x2 pixels,
+//     // so no detail is skipped (Android's bilinear resize doesn't antialias big reductions)
+//     while (image.width / 2 >= RESIZE_SIZE) {
+//         image = await ImageManipulator.manipulate(image)
+//             .resize({ width: Math.round(image.width / 2) })
+//             .renderAsync()
+//     }
+
+//     // final Resize(256) + CenterCrop(224), now a small (< 2x) reduction
+//     const factor = RESIZE_SIZE / image.width
+//     const transformed = await ImageManipulator.manipulate(image)
+//         .resize({ width: RESIZE_SIZE })
+//         .crop({
+//             originX: (RESIZE_SIZE - CROP_SIZE) / 2,
+//             originY: Math.round((image.height * factor - CROP_SIZE) / 2),
+//             width: CROP_SIZE,
+//             height: CROP_SIZE,
+//         })
+//         .renderAsync()
+
+// const saved = await transformed.saveAsync({ compress: 1 })
+// const inInt8 = await new File(saved.uri).bytes()
+// const rawData = jpeg_js.decode(inInt8,{useTArray: true, formatAsRGBA: false})
+// const inImageBuffer:ImageBuffer = {
+//   data: rawData.data,
+//   width: CROP_SIZE,
+//   height: CROP_SIZE,
+//   format: 'rgb',
+//   layout: 'hwc'
 // }
 
+// return saved.uri
 // }
