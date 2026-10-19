@@ -11,17 +11,14 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
-import { Classifier } from "react-native-executorch";
 
 
 export default function Camera() {
   const [permission, requestPermission] = useCameraPermissions();
   const ref = useRef<CameraView>(null);
   const [uri, setUri] = useState<string | null>(null);
-  const [classifier, setClassifier] = useState<Classifier<string> | null>(null)
   const [identifyPicture, setIdentifyPicture] = useState<boolean>(false)
   const plantDraft = usePlantDraft()
-  
   if (!permission) {
     return null;
   }
@@ -67,7 +64,9 @@ export default function Camera() {
                 </ButtonText>
                 <Ionicons name="search-sharp" size={16}/>
             </Button>
-            <Button className=" rounded-3xl" onPress={() => setIdentifyPicture(false)}>
+            <Button className=" rounded-3xl" onPress={() => {
+              setIdentifyPicture(false)
+              }}>
                 <ButtonText>Save Picture</ButtonText>
                 <Ionicons name="file-tray-sharp" size={16}/>
             </Button>
@@ -102,6 +101,7 @@ export default function Camera() {
         {/* defaults to the back camera taking pictures */}
         <CameraView
           style={styles.camera}
+          pictureSize="960x720"
           ref={ref}
           responsiveOrientationWhenOrientationLocked
         />

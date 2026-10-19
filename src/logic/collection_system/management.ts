@@ -1,4 +1,5 @@
-import { createCollection, getAllCollections, getCollection } from "@/src/data/repositories/collections";
+import { createCollection, deleteCollection, getAllCollections, getCollection } from "@/src/data/repositories/collections";
+import { DeleteOutput, handlePlantGetAll } from "../plants/management";
 
 export type SubmissionStatus = {
     status: boolean;
@@ -43,4 +44,33 @@ export async function handleCollectionGet(id:number){
     console.error(e)
     return null
    }
+}
+
+export async function handleCollectionDeletion(id:number):Promise<DeleteOutput> {
+    try {
+        const allPlants = await handlePlantGetAll(id)
+        
+        if(allPlants && allPlants?.length>0){
+            return {
+                result: false,
+                status: "There's plants inside of this collection!\n Delete them first."
+            }
+        }else{
+            const result = await deleteCollection(id)
+            if(result){
+                return {result: true,
+                        status: `${result.name} deleted succesfully.`
+                }
+            }else{
+                return{
+                    result:false,
+                    status: `No Collection with id ${id}`
+                }
+            }}
+    } catch (error) {
+        return {
+            result: false,
+            status: "Something went wrong"
+        }
+    }  
 }

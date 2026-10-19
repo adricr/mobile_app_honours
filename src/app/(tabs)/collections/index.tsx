@@ -19,7 +19,7 @@ export default function Index() {
   return(
     <View className="bg-[#032601] flex flex-2 items-center">
       <CreateModal itemType="collection" modalOn={createCollection} setModalOn={setCreateCollection} onCreated={loadCollections} />
-      <ContentList contentArray={collections} contentType="collection"></ContentList>
+      <ContentList refreshCollections={loadCollections} contentArray={collections} contentType="collection"></ContentList>
       <ButtonGroup className="m-5 size-max">
         <Button onPressOut={()=>{setCreateCollection(!createCollection)}} size="lg" className="rounded-full p-3.5">
           <Ionicons size={32} name="add-outline"></Ionicons>

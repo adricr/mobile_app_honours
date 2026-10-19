@@ -1,9 +1,13 @@
 import { CareReq, createSpecies, getAllCareReq, getCatalogueEntry } from "@/src/data/repositories/plant-knowledge";
-import { createPlant, getAllPlants } from "@/src/data/repositories/plants";
+import { createPlant, deletePlant, getAllPlants, getPlant } from "@/src/data/repositories/plants";
 
 export type SubmissionStatus = {
     status: boolean;
     description: string;
+}
+export type DeleteOutput ={
+    result: boolean
+    status: string
 }
 
 const MAX_NAME_LENGTH = 30
@@ -86,4 +90,36 @@ export async function handlePlantCatalogueGetAll(){
     console.error(e)
     return null
    }
+}
+
+export async function handlePlantDeletion(id:number):Promise<DeleteOutput> {
+
+    try {
+        const result = await deletePlant(id)
+        if(result){
+            return {result: true,
+                    status: `${result.name ? result.name : result.species} deleted succesfully.`
+            }
+        }else{
+            return{
+                result:false,
+                status: `No plant with id ${id}`
+            }
+        }
+    } catch (error) {
+        return {
+            result: false,
+            status: "Something went wrong!"
+        }
+    }
+}
+
+export async function handleGetPlantSpeciesName(id:number){
+    const plant = await getPlant(id)
+    const allCare = await getAllCareReq()
+    if(plant){
+        return allCare?.at(plant.species)?.species
+    }
+    return null
+    
 }

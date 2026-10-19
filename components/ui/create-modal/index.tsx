@@ -47,11 +47,9 @@ export default function CreateModal({itemType, modalOn, setModalOn, onCreated, c
     }
     if (itemType ==="plant"){
       console.log(draftPlant)
-      if( draftPlant.draft?.species != null && draftPlant.identifiedSpecies != null){
-        setModalOn(true)
-      }
+      const returningFromCamera = draftPlant.draft?.species != null && draftPlant.identifiedSpecies != null
       return(
-        <Modal isOpen={modalOn}>
+        <Modal isOpen={modalOn || returningFromCamera}>
         <ModalBackdrop/>
           <ModalContent>
             <ModalHeader>
