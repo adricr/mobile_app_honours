@@ -1,3 +1,4 @@
+import { Coordinates } from "@/src/logic/location/location_system";
 import { SQLiteRunResult } from "expo-sqlite";
 import { db } from "../database";
 import { CareReq, CurrentCare } from "./plant-knowledge";
@@ -15,16 +16,17 @@ export type Plant = {
     care_requirements: CareReq;
     care_recommendations: CareReq;
     current_status: CurrentCare;
+    location: Coordinates | null;
     care_log: Array<CareLog>;
     collection: number;
     created_at: string;
 };
 
-export async function createPlant(name: string, species : number, photo_uri: string | null, care_requirements: CareReq | null, care_recommendations: CareReq | null, current_status:CurrentCare, collection: number ) : Promise<SQLiteRunResult | null> {
+export async function createPlant(name: string, species : number, photo_uri: string | null, care_requirements: CareReq | null, care_recommendations: CareReq | null, current_status:CurrentCare, location: Coordinates|null, collection: number ) : Promise<SQLiteRunResult | null> {
     return db.runAsync(`
-        INSERT INTO plants (name, species, photo_uri, care_requirements, care_recommendations, current_status, collection) VALUES (?,?,?,?,?,?,?)`
+        INSERT INTO plants (name, species, photo_uri, care_requirements, care_recommendations, current_status, location, collection) VALUES (?,?,?,?,?,?,?,?)`
         , name, species, photo_uri,care_requirements ? JSON.stringify(care_requirements):null, care_recommendations ? JSON.stringify(care_recommendations) : null
-, current_status? JSON.stringify(current_status):null, collection
+, current_status? JSON.stringify(current_status):null, location?JSON.stringify(location):null, collection
     )
 }
 
@@ -33,7 +35,7 @@ export async function getAllPlants(collection: number) : Promise<Array<Plant> | 
 }
 
 export async function getPlant(id : number) : Promise<Plant | null>{
-    const plant = await db.getFirstAsync(`SELECT id, name, species, photo_uri, care_requirements, care_recommendations, current_status, care_log, collection, created_at FROM plants WHERE id = ?`,id)
+    const plant = await db.getFirstAsync(`SELECT id, name, species, photo_uri, care_requirements, care_recommendations, current_status, care_log, location,  collection, created_at FROM plants WHERE id = ?`,id)
     const result = parsePlant(plant)
     return result
 }
@@ -52,6 +54,7 @@ return {
     care_requirements: row.care_requirements ? JSON.parse(row.care_requirements) : null,
     care_recommendations: row.care_recommendations ? JSON.parse(row.care_recommendations) : null,
     current_status: row.current_status ? JSON.parse(row.current_status) : null,
+    location: row.location ? JSON.parse(row.location) : null,
     care_log: row.care_log ? JSON.parse(row.care_log) : [],
 }
 }

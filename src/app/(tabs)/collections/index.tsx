@@ -12,7 +12,9 @@ export default function Index() {
   const [collections, setCollections] = useState<Collection[]>([])
   const [createCollection, setCreateCollection] = useState(false)
   const loadCollections = useCallback(() => {
-      handleCollectionGetAll().then(setCollections).catch(console.error)
+      handleCollectionGetAll().then(res=>{
+        if(res)
+          setCollections(res)}).catch(console.error)
   }, [])
 
   useEffect(() => { loadCollections() }, [loadCollections])

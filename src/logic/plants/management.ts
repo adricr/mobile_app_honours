@@ -1,5 +1,6 @@
 import { CareReq, createSpecies, CurrentCare, getAllCareReq, getCatalogueEntry, getSpeciesName } from "@/src/data/repositories/plant-knowledge";
 import { createPlant, deletePlant, getAllPlants, getPlant } from "@/src/data/repositories/plants";
+import { Coordinates } from "../location/location_system";
 
 export type SubmissionStatus = {
     status: boolean;
@@ -17,6 +18,7 @@ export type NewPlantInfo = {
     species: string | null;         // a catalogue species, or one typed by the user
     photo_uri: string | null;
     last_watered: number | null;    // days ago
+    location: Coordinates | null;
     position: string | null;        // "full sun" | "partial shade" | "shade"
     collection: number;
 }
@@ -50,11 +52,12 @@ export async function handlePlantCreation(plantInfo: NewPlantInfo): Promise<Subm
                 hardiness: catalogueEntry?.hardiness,
             }
             if(catalogueEntry)
-               creationOk = await createPlant(name, catalogueEntry.id, plantInfo.photo_uri,careReqs, null,current_status,plantInfo.collection)
+               creationOk = await createPlant(name, catalogueEntry.id, plantInfo.photo_uri,careReqs, null,current_status, plantInfo.location, plantInfo.collection)
             else{
                 // If the species is custom
                 const newSpeciesId = await createSpecies(plantInfo.species)
-                creationOk = await createPlant(name, newSpeciesId, plantInfo.photo_uri,careReqs, null,current_status,plantInfo.collection)
+                console.log(location)
+                creationOk = await createPlant(name, newSpeciesId, plantInfo.photo_uri,careReqs, null,current_status, plantInfo.location, plantInfo.collection)
             }
             if(creationOk){
                 result.status = true

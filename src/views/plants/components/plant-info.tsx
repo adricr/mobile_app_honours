@@ -30,6 +30,7 @@ export default function PlantInfo({plant, plantSpecies}:PlantInfoProps){
                         Last Watered: {plant?.current_status ? new Date(plant.current_status.last_watered).toLocaleDateString() : ''}
                     </Text>
                     <PlantPosition position={plant.current_status.position} />
+                    <Text>Lat :{plant.location?.latitude}</Text>
                 </Card>
                 <Card>
                     <Heading>Care for your {plantSpecies}</Heading>

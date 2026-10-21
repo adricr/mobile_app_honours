@@ -4,6 +4,7 @@ import { Input, InputField } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { CatalogueEntry } from "@/src/data/repositories/plant-knowledge";
+import { getLocation } from "@/src/logic/location/location_system";
 import { handlePlantCatalogueGetAll, handlePlantCreation, NewPlantInfo } from "@/src/logic/plants/management";
 import { usePlantDraft } from "@/src/logic/plants/plant-draft-context";
 import Ionicons from "@react-native-vector-icons/ionicons/static";
@@ -18,7 +19,7 @@ type AddPlantProps ={
 };
 const POSITIONS = ["full sun", "partial shade", "shade"]
 // pages: 0 species, 1 name, 2 last watered, 3 position, 4 summary + submit
-const LAST_PAGE = 4
+const LAST_PAGE = 5
 
 function emptyPlantInfo(collectionId: number): NewPlantInfo {
     return {
@@ -26,6 +27,7 @@ function emptyPlantInfo(collectionId: number): NewPlantInfo {
         species: null,
         photo_uri: null,
         last_watered: null,
+        location: null,
         position: null,
         collection: collectionId,
     }
@@ -134,7 +136,35 @@ export default function AddPlant({collectionId, setSubmitted, onCreated, setModa
             </>
             )
             break
-        case 3:
+            case 3:
+        currentPage = (
+        <>
+            <FormControlLabel>
+                <FormControlLabelText>{`Would you like to provide the plant's location to receive recommendations based on local temperature and humidity?\n (Will need your permission to use your location)`}</FormControlLabelText>
+            </FormControlLabel>
+            <ButtonGroup>
+            <Button onPress={() => {
+                getLocation()
+                    .then(res => {
+                        if (res) {
+                            setPlantInfoToSend(info => ({ ...info, location: res }))
+                        }
+                    })
+                    .catch(console.error)
+            }}>
+
+                <ButtonText>Yes, use my location</ButtonText>
+            </Button>
+            {plantInfoToSend.location && <Text className="text-green-400">Location saved!</Text>}
+            <Button>
+                <ButtonText>No need for that!</ButtonText>
+            </Button>
+            </ButtonGroup>
+
+        </>
+        )
+        break
+        case 4:
             currentPage = (
             <>
                 <FormControlLabel>
@@ -154,7 +184,7 @@ export default function AddPlant({collectionId, setSubmitted, onCreated, setModa
             </>
             )
             break
-        case 4:
+        case 5:
             currentPage = (
             <>
                 <FormControlLabel>

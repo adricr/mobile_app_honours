@@ -30,6 +30,7 @@ export async function initDb(db:SQLite.SQLiteDatabase) {
       care_recommendations TEXT,
       current_status TEXT,
       care_log TEXT,
+      location TEXT,
       collection INTEGER NOT NULL,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (species) REFERENCES plant_catalogue(id),
