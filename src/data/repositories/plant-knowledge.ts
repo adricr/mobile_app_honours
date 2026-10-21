@@ -1,8 +1,15 @@
 import { db } from "../database";
 
+export type Position = "full sun" | "partial shade" | "shade"
 export type CareReq = {
-    position: string | null;
+    position: Position | null;
     water_schedule: number | null;
+    hardiness: number | null;       // minimum temperature in °C
+};
+
+export type CurrentCare = {
+    position: Position;
+    last_watered: number;
 };
 
 export type CatalogueEntry = {
@@ -11,12 +18,13 @@ export type CatalogueEntry = {
     common_name: string | null;
     position: string | null;
     water_schedule: number | null;
+    hardiness: number | null;       // minimum temperature in °C
 };
 
 // exact match on the species name, ignoring case; null if the species isn't in the catalogue
 export async function getCatalogueEntry(species: string): Promise<CatalogueEntry | null> {
     return db.getFirstAsync<CatalogueEntry>(
-        'SELECT id, species, common_name, position, water_schedule FROM plant_catalogue WHERE species = ? COLLATE NOCASE',
+        'SELECT id, species, common_name, position, water_schedule, hardiness FROM plant_catalogue WHERE species = ? COLLATE NOCASE',
         species
     )
 }
@@ -33,7 +41,7 @@ export function createCareReq(species:string) {
 
 export async function getCareReq(species:string): Promise<CareReq | null> {
 
-    return db.getFirstAsync('SELECT position, water_schedule FROM plant_catalogue WHERE species LIKE ?',species)
+    return db.getFirstAsync('SELECT position, water_schedule, hardiness FROM plant_catalogue WHERE species LIKE ?',species)
     // const statement = await db.prepareAsync(
     // 'SELECT position, water_schedule FROM plant_catalogue WHERE species LIKE $species'
     // );
@@ -45,8 +53,14 @@ export async function getCareReq(species:string): Promise<CareReq | null> {
     // }
 }
 
+export async function getSpeciesName(speciesId: number): Promise<string | null> {
+    const row = await db.getFirstAsync<{ species: string }>(
+        'SELECT species FROM plant_catalogue WHERE id = ?', speciesId)
+    return row?.species ?? null
+}
+
 export async function getAllCareReq(): Promise<Array<CatalogueEntry> | null > {
-    return db.getAllAsync('SELECT species, position, water_schedule FROM plant_catalogue')
+    return db.getAllAsync('SELECT species, position, water_schedule, hardiness FROM plant_catalogue')
 }
 
 export function updateCareReq(species:String){

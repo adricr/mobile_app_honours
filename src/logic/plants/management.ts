@@ -1,4 +1,4 @@
-import { CareReq, createSpecies, getAllCareReq, getCatalogueEntry } from "@/src/data/repositories/plant-knowledge";
+import { CareReq, createSpecies, CurrentCare, getAllCareReq, getCatalogueEntry, getSpeciesName } from "@/src/data/repositories/plant-knowledge";
 import { createPlant, deletePlant, getAllPlants, getPlant } from "@/src/data/repositories/plants";
 
 export type SubmissionStatus = {
@@ -31,22 +31,23 @@ export async function handlePlantCreation(plantInfo: NewPlantInfo): Promise<Subm
     }
     if(!plantInfo.collection)
         result.description = result.description.concat("No collection available.\n\n")
-    if(!plantInfo.last_watered)
+    if(plantInfo.last_watered === null)
         result.description = result.description.concat("Please tell us how many days since you watered the plant. \n\n")
     if(!plantInfo.position)
         result.description = result.description.concat("Please tell us how much light your plant is receiving.\n\n")
     if(!plantInfo.species)
         result.description = result.description.concat("Please tell us what species your plant is.\n\n")
-    if(result.description.length===0 && plantInfo.species){
-        const current_status = <CareReq>{
+    if(result.description.length===0 && plantInfo.species && plantInfo.last_watered!=null){
+        const current_status = <CurrentCare>{
             position: plantInfo.position,
-            water_schedule: plantInfo.last_watered,
+            last_watered: (Date.now() - (plantInfo.last_watered*24*60*60*1000))
         }
         try {
             catalogueEntry = await getCatalogueEntry(plantInfo.species)
             const careReqs = <CareReq>{
                 position: catalogueEntry?.position,
                 water_schedule: catalogueEntry?.water_schedule,
+                hardiness: catalogueEntry?.hardiness,
             }
             if(catalogueEntry)
                creationOk = await createPlant(name, catalogueEntry.id, plantInfo.photo_uri,careReqs, null,current_status,plantInfo.collection)
@@ -75,6 +76,16 @@ export async function handlePlantCreation(plantInfo: NewPlantInfo): Promise<Subm
 export async function handlePlantGetAll(collectionId:number){
    try{
     const result = await getAllPlants(collectionId)
+    return result
+   } catch(e){
+    console.error(e)
+    return null
+   }
+}
+
+export async function handlePlantGet(plantId:number){
+   try{
+    const result = await getPlant(plantId)
     return result
    } catch(e){
     console.error(e)
@@ -114,12 +125,11 @@ export async function handlePlantDeletion(id:number):Promise<DeleteOutput> {
     }
 }
 
-export async function handleGetPlantSpeciesName(id:number){
-    const plant = await getPlant(id)
-    const allCare = await getAllCareReq()
-    if(plant){
-        return allCare?.at(plant.species)?.species
+export async function handleGetPlantSpeciesName(speciesId: number): Promise<string | null> {
+    try {
+        return await getSpeciesName(speciesId)
+    } catch (e) {
+        console.error(e)
+        return null
     }
-    return null
-    
 }

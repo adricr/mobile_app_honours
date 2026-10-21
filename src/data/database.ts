@@ -11,7 +11,8 @@ export async function initDb(db:SQLite.SQLiteDatabase) {
         species TEXT NOT NULL UNIQUE,
         common_name TEXT,
         position TEXT,
-        water_schedule INTEGER
+        water_schedule INTEGER,
+        hardiness INTEGER
     );
 
     CREATE TABLE IF NOT EXISTS collections (
@@ -70,7 +71,7 @@ export async function seedDb(db:SQLite.SQLiteDatabase) {
             for (const key in catalogue){
                 for(const care_key in carereqs)
                     if(carereqs[care_key].species === catalogue[key].species){
-                        await db.runAsync('INSERT INTO plant_catalogue (species, common_name, position, water_schedule) VALUES (?,?,?,?)',catalogue[key].species, catalogue[key].common_name, carereqs[care_key].position, carereqs[care_key].water_schedule)}
+                        await db.runAsync('INSERT INTO plant_catalogue (species, common_name, position, water_schedule, hardiness) VALUES (?,?,?,?,?)',catalogue[key].species, catalogue[key].common_name, carereqs[care_key].position, carereqs[care_key].water_schedule, carereqs[care_key].hardiness)}
             }
         })
     }   
