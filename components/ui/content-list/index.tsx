@@ -5,7 +5,7 @@ import { handlePlantDeletion } from "@/src/logic/plants/management";
 import Ionicons from "@react-native-vector-icons/ionicons/static";
 import { router } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { AlertDialog, AlertDialogBackdrop, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader } from "../alert-dialog";
 import { Button, ButtonGroup, ButtonText } from "../button";
 import { Card } from "../card";
@@ -104,7 +104,7 @@ export default function ContentList({refreshCollections, contentArray, contentTy
         setShowAlertDialog(false)
     }
     return(
-    <View style={styles.container} className="size-full">
+    <ScrollView style={styles.container} contentContainerStyle={styles.content} className="size-full">
         {contentArray && contentArray.length > 0 ?
         (
             <Card className="w-full">
@@ -147,15 +147,18 @@ export default function ContentList({refreshCollections, contentArray, contentTy
                 <Text bold={true} underline={true} size="xl">Please add them using the button below</Text>
             </Card>
         )}
-    </View>
+    </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
     backgroundColor: "#032601",
+  },
+  content: {
+    flexGrow: 1,
+    alignItems: "center",
     justifyContent: "center",
   },
     text: {

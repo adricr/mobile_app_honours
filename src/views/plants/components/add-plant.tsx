@@ -8,6 +8,7 @@ import { getLocation } from "@/src/logic/location/location_system";
 import { handlePlantCatalogueGetAll, handlePlantCreation, NewPlantInfo } from "@/src/logic/plants/management";
 import { usePlantDraft } from "@/src/logic/plants/plant-draft-context";
 import Ionicons from "@react-native-vector-icons/ionicons/static";
+import * as Network from 'expo-network';
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import CatalogueSelector from "./catalogue-selector";
@@ -37,6 +38,7 @@ export default function AddPlant({collectionId, setSubmitted, onCreated, setModa
     const [isInvalid, setisInvalid] = useState(false);
     const [errorText,setErrorText] = useState("")
     const [plantCatalogue, setPlantCatalogue] = useState<CatalogueEntry[] | null>([])
+    const networkState = Network.useNetworkState();
     // what's picked in the dropdown; the species itself is kept in plantInfoToSend
     const plantDraft = usePlantDraft()
     const [newPlantSpeciesName, setNewPlantSpeciesName] = useState<string | null>(plantDraft.identifiedSpecies)
@@ -160,7 +162,7 @@ export default function AddPlant({collectionId, setSubmitted, onCreated, setModa
                 <ButtonText>No need for that!</ButtonText>
             </Button>
             </ButtonGroup>
-
+            {!networkState.isInternetReachable && <Text>Location will be saved but no recommendations will be provided as there is no internet connection</Text>}
         </>
         )
         break

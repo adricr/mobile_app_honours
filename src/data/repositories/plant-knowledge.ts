@@ -2,15 +2,11 @@ import { db } from "../database";
 
 export type Position = "full sun" | "partial shade" | "shade"
 export type CareReq = {
-    position: Position | null;
-    water_schedule: number | null;
-    hardiness: number | null;       // minimum temperature in °C
+    position: Position ;
+    water_schedule: number;
+    hardiness: number;       // minimum temperature in °C
 };
 
-export type CurrentCare = {
-    position: Position;
-    last_watered: number;
-};
 
 export type CatalogueEntry = {
     id: number;

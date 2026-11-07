@@ -18,6 +18,7 @@ export default function Camera() {
   const ref = useRef<CameraView>(null);
   const [uri, setUri] = useState<string | null>(null);
   const [identifyPicture, setIdentifyPicture] = useState<boolean>(false)
+  const [cameraReady, setCameraReady] = useState(false)
   const plantDraft = usePlantDraft()
   if (!permission) {
     return null;
@@ -37,8 +38,11 @@ export default function Camera() {
   }
 
   const takePicture = async () => {
-    const photo = await ref.current?.takePictureAsync();
+    // the docs ask to wait for onCameraReady before taking a picture
+    if (!cameraReady) return;
+    const photo = await ref.current?.takePictureAsync().catch((e) => { console.error(e); return undefined; });
     if (photo?.uri){
+      setCameraReady(false); // the camera view is removed while the picture is shown, and reports ready again when it comes back
       setUri(photo.uri);
     } 
   };
@@ -64,12 +68,13 @@ export default function Camera() {
                 </ButtonText>
                 <Ionicons name="search-sharp" size={16}/>
             </Button>
-            <Button className=" rounded-3xl" onPress={() => {
+            {/* maybe later */}
+            {/* <Button className=" rounded-3xl" onPress={() => {
               setIdentifyPicture(false)
               }}>
                 <ButtonText>Save Picture</ButtonText>
                 <Ionicons name="file-tray-sharp" size={16}/>
-            </Button>
+            </Button> */}
             <Button className=" rounded-3xl" onPress={() => {
               setIdentifyPicture(false)
               setUri(null)
@@ -85,7 +90,7 @@ export default function Camera() {
               }
               router.back()
               }}>
-                <ButtonText>Exit</ButtonText>
+                {plantDraft.identifiedSpecies ? <ButtonText>Happy with this ID</ButtonText>: <ButtonText>Exit</ButtonText>}
                 <Ionicons name="exit-sharp" size={16}/>
             </Button>
         </ButtonGroup>
@@ -103,6 +108,7 @@ export default function Camera() {
           style={styles.camera}
           pictureSize="960x720"
           ref={ref}
+          onCameraReady={() => setCameraReady(true)}
           responsiveOrientationWhenOrientationLocked
         />
         <View style={styles.shutterContainer}>
@@ -111,13 +117,13 @@ export default function Camera() {
               <Ionicons name="arrow-undo-sharp" size={32} color="white" />
             </Button>
 
-          <Pressable onPress={takePicture}>
+          <Pressable onPress={takePicture} disabled={!cameraReady}>
             {({ pressed }) => (
               <View
                 style={[
                   styles.shutterBtn,
                   {
-                    opacity: pressed ? 0.5 : 1,
+                    opacity: pressed || !cameraReady ? 0.5 : 1,
                   },
                 ]}
               >

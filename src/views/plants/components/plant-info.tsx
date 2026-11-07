@@ -10,10 +10,11 @@ import PlantRecommendations from "./recommendations";
 
 type PlantInfoProps = {
     plant: Plant,
-    plantSpecies: string
+    plantSpecies: string,
+    onRefetch: () => void
 }
 
-export default function PlantInfo({plant, plantSpecies}:PlantInfoProps){
+export default function PlantInfo({plant, plantSpecies, onRefetch}:PlantInfoProps){
 
     return(
         <Card className="w-full flex">
@@ -30,12 +31,11 @@ export default function PlantInfo({plant, plantSpecies}:PlantInfoProps){
                         Last Watered: {plant?.current_status ? new Date(plant.current_status.last_watered).toLocaleDateString() : ''}
                     </Text>
                     <PlantPosition position={plant.current_status.position} />
-                    <Text>Lat :{plant.location?.latitude}</Text>
                 </Card>
                 <Card>
                     <Heading>Care for your {plantSpecies}</Heading>
                     <PlantRequirements plantReqs={plant.care_requirements} />
-                    <PlantRecommendations currentStatus={plant.current_status} plantReqs={plant.care_requirements} />
+                    <PlantRecommendations plant={plant} onRefetch={onRefetch} />
                 </Card>
                 <Card>
                     <Heading>Care Log</Heading>

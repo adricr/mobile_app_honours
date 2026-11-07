@@ -1,12 +1,19 @@
 import { Coordinates } from "@/src/logic/location/location_system";
 import { SQLiteRunResult } from "expo-sqlite";
 import { db } from "../database";
-import { CareReq, CurrentCare } from "./plant-knowledge";
+import { CareReq, Position } from "./plant-knowledge";
+import { PlantRecommendation } from "./recommendations";
 
 export type CareLog ={
     action: string;
     description: string;
     created_at: Date;
+};
+
+export type CurrentCare = {
+    position: Position;
+    last_watered: number;
+    context: PlantContext | null
 };
 export type Plant = {
     id: number;
@@ -14,7 +21,7 @@ export type Plant = {
     species: number;
     photo_uri: string;
     care_requirements: CareReq;
-    care_recommendations: CareReq;
+    care_recommendations: PlantRecommendation;
     current_status: CurrentCare;
     location: Coordinates | null;
     care_log: Array<CareLog>;
@@ -22,7 +29,13 @@ export type Plant = {
     created_at: string;
 };
 
-export async function createPlant(name: string, species : number, photo_uri: string | null, care_requirements: CareReq | null, care_recommendations: CareReq | null, current_status:CurrentCare, location: Coordinates|null, collection: number ) : Promise<SQLiteRunResult | null> {
+export type PlantContext = {
+    temperature: number,
+    humidity: number,
+    cloud_cover: number,
+    gathered_on : number
+}
+export async function createPlant(name: string, species : number, photo_uri: string | null, care_requirements: CareReq | null, care_recommendations: PlantRecommendation | null, current_status:CurrentCare, location: Coordinates|null, collection: number ) : Promise<SQLiteRunResult | null> {
     return db.runAsync(`
         INSERT INTO plants (name, species, photo_uri, care_requirements, care_recommendations, current_status, location, collection) VALUES (?,?,?,?,?,?,?,?)`
         , name, species, photo_uri,care_requirements ? JSON.stringify(care_requirements):null, care_recommendations ? JSON.stringify(care_recommendations) : null
@@ -39,6 +52,40 @@ export async function getPlant(id : number) : Promise<Plant | null>{
     const result = parsePlant(plant)
     return result
 }
+
+
+export async function getPlantCurrentStatus(id: number): Promise<CurrentCare | null> {
+    const row = await db.getFirstAsync<{ current_status: string | null }>(
+        `SELECT current_status FROM plants WHERE id = ?`, id)
+    return row?.current_status ? JSON.parse(row.current_status) : null
+}
+
+// sets last_watered to now on the plant's current status; returns the new status, or null if the plant has no status stored
+export async function waterPlant(id: number): Promise<CurrentCare | null> {
+    const current = await getPlantCurrentStatus(id)
+    if (!current) {
+        return null
+    }
+    const updated: CurrentCare = { ...current, last_watered: Date.now() }
+    await db.runAsync(`UPDATE plants SET current_status = ? WHERE id = ?`, JSON.stringify(updated), id)
+    return updated
+}
+
+// replaces the plant's stored current_status; returns the number of rows changed (0 if the plant doesn't exist)
+export async function updatePlantCurrentStatus(id: number, currentCare: CurrentCare): Promise<number> {
+    return (await db.runAsync(`UPDATE plants SET current_status = ? WHERE id = ?`, JSON.stringify(currentCare), id)).changes
+}
+
+export async function updatePlantContext(id: number, context: PlantContext): Promise<CurrentCare | null> {
+    const current = await getPlantCurrentStatus(id)
+    if (!current) {
+        return null
+    }
+    const updated: CurrentCare = { ...current, context }
+    await updatePlantCurrentStatus(id, updated)
+    return updated
+}
+
 
 export async function deletePlant(id : number) : Promise<Plant | null> {
     return db.getFirstAsync(`DELETE FROM plants WHERE id = ? RETURNING *`,id)

@@ -9,15 +9,23 @@ export default function PlantScreen(){
     const [plant, setPlant] = useState<Plant | null>(null)
     const [plantSpecies,setPlantSpecies] = useState<string | null>(null)
     const plantId = Number(id)
-    useEffect(()=>{handlePlantGet(plantId).then(
-        (res)=>{
-            if (res){
+    // we need to trigger re-reads for when things change
+    async function refetchPlant(){
+        const res = await handlePlantGet(plantId)
+        if (res){
+            setPlant(res)
+        }
+        return res
+    }
+    useEffect(()=>{
+        handlePlantGet(plantId).then((res)=>{
+            if(res){
                 setPlant(res)
                 if(res.species)
-                    handleGetPlantSpeciesName(res.species).then(sp=>setPlantSpecies(sp)) 
+                    handleGetPlantSpeciesName(res.species).then(sp=>setPlantSpecies(sp))
             }
-
-            }).catch(e=>console.error)},[])
+        })
+    },[plantId])
     return (
         <>
             <Stack.Header style={{backgroundColor: '#1ea11c',
@@ -25,7 +33,7 @@ export default function PlantScreen(){
             }} />
             <Stack.Screen options={{ title: plant?.name }} />
             <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-                {plant && plantSpecies && <PlantInfo plant={plant} plantSpecies={plantSpecies}></PlantInfo>}
+                {plant && plantSpecies && <PlantInfo plant={plant} plantSpecies={plantSpecies} onRefetch={refetchPlant}></PlantInfo>}
             </ScrollView>
         </>
     )
