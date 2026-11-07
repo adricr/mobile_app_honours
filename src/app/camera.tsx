@@ -42,7 +42,7 @@ export default function Camera() {
     if (!cameraReady) return;
     const photo = await ref.current?.takePictureAsync().catch((e) => { console.error(e); return undefined; });
     if (photo?.uri){
-      setCameraReady(false); // the camera view is removed while the picture is shown, and reports ready again when it comes back
+      await ref.current?.pausePreview()
       setUri(photo.uri);
     } 
   };
@@ -75,7 +75,8 @@ export default function Camera() {
                 <ButtonText>Save Picture</ButtonText>
                 <Ionicons name="file-tray-sharp" size={16}/>
             </Button> */}
-            <Button className=" rounded-3xl" onPress={() => {
+            <Button className=" rounded-3xl" onPress={async() => {
+              await ref.current?.resumePreview()
               setIdentifyPicture(false)
               setUri(null)
               }}>
@@ -141,7 +142,8 @@ export default function Camera() {
 
   return (
     <View style={styles.container}>
-      {uri ? renderPicture(uri) : renderCamera()}
+      {renderCamera()}
+      {uri && <View style={styles.pictureLayer}>{renderPicture(uri)}</View>}
     </View>
   );
 }
@@ -149,6 +151,17 @@ export default function Camera() {
 const styles = StyleSheet.create({
   container: {
     flex: 2,
+    backgroundColor: "#032601",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  // opaque, so the camera preview underneath doesn't show through, and it catches the touches meant for the shutter
+  pictureLayer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: "#032601",
     alignItems: "center",
     justifyContent: "center",
