@@ -162,7 +162,7 @@ export default function AddPlant({collectionId, setSubmitted, onCreated, setModa
                 <ButtonText>No need for that!</ButtonText>
             </Button>
             </ButtonGroup>
-            {!networkState.isInternetReachable && <Text>Location will be saved but no recommendations will be provided as there is no internet connection</Text>}
+            {!networkState.isInternetReachable && <Text>Location will be saved but only some recommendations will be provided as there is no internet connection</Text>}
         </>
         )
         break
