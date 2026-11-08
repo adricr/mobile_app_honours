@@ -3,7 +3,7 @@ import { Rule } from "../repositories/recommendations"
 export const rules:Rule[] =[
     {
         name: "low temps",
-        condition: f=> f.temp<f.hardiness,
+        condition: f=> f.temp!= null && f.temp<f.hardiness,
         result: f=> {return "needs_higher_temps"}
 
     },
@@ -14,7 +14,7 @@ export const rules:Rule[] =[
     },
     {
         name: "Lots of clouds",
-        condition: f=> f.cloud_cover>90 && f.recommended_position == "full sun",
+        condition: f=> f.cloud_cover!= null && f.cloud_cover>90 && f.recommended_position == "full sun",
         result: f=>{return "needs_temporary_sun"}
     },
     {

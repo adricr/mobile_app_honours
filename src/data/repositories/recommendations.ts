@@ -12,9 +12,9 @@ export type Facts = {
     recommended_position: Position,
     watering_interval: number,
     hardiness: number,
-    temp: number,
+    temp: number | null,
     last_watered: number
-    cloud_cover: number, 
+    cloud_cover: number | null, 
     position: Position,
 }
 
@@ -42,12 +42,20 @@ export function isRecommendation(x: Facts | Recommendation): x is Recommendation
     return "needs_new_position" == x || "needs_watering" == x || "needs_higher_temps" == x || "needs_temporary_sun" == x
 }
 // Returns facts or if there's some issue a string with the problem
-export function getFacts(currentStatus:CurrentCare | null, careRequirements:CareReq | null):Facts | string{
+export function getFacts(currentStatus:CurrentCare, careRequirements:CareReq | null):Facts | string{
     // every care requirement is needed!
     if(!careRequirements || careRequirements.position == null || careRequirements.water_schedule == null || careRequirements.hardiness == null)
         return "We do not have enough information on this plant species to offer information"
     if(!currentStatus?.context)
-        return "We do not have information on the plant's surroundings.\nPlease make sure to allow the app to gather context"
+        return {
+        recommended_position: careRequirements.position,
+        watering_interval: careRequirements.water_schedule,
+        hardiness: careRequirements.hardiness,
+        temp: null,
+        last_watered: currentStatus.last_watered,
+        cloud_cover: null,
+        position: currentStatus.position
+        }
     return {
         recommended_position: careRequirements.position,
         watering_interval: careRequirements.water_schedule,

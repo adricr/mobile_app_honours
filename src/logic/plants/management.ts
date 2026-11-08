@@ -1,7 +1,7 @@
 import { CareReq, createSpecies, getAllCareReq, getCatalogueEntry, getSpeciesName } from "@/src/data/repositories/plant-knowledge";
 import { createPlant, CurrentCare, deletePlant, getAllPlants, getPlant, PlantContext, updatePlantCareLog, waterPlant } from "@/src/data/repositories/plants";
+import * as Network from 'expo-network';
 import { Coordinates } from "../location/location_system";
-
 export type SubmissionStatus = {
     status: boolean;
     description: string;
@@ -47,7 +47,7 @@ export async function handlePlantCreation(plantInfo: NewPlantInfo): Promise<Subm
             context: null
             }
             let context: PlantContext | null = null
-            if(plantInfo.location){
+            if(plantInfo.location && (await Network.getNetworkStateAsync()).isInternetReachable){
                context = await handleGetPlantContext(plantInfo.location.latitude,plantInfo.location.longitude)
                if(context){
                 current_status = {...current_status, context: context}
