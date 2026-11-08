@@ -1,5 +1,5 @@
 import { CareReq, createSpecies, getAllCareReq, getCatalogueEntry, getSpeciesName } from "@/src/data/repositories/plant-knowledge";
-import { createPlant, CurrentCare, deletePlant, getAllPlants, getPlant, PlantContext } from "@/src/data/repositories/plants";
+import { createPlant, CurrentCare, deletePlant, getAllPlants, getPlant, PlantContext, updatePlantCareLog, waterPlant } from "@/src/data/repositories/plants";
 import { Coordinates } from "../location/location_system";
 
 export type SubmissionStatus = {
@@ -143,6 +143,31 @@ export async function handleGetPlantSpeciesName(speciesId: number): Promise<stri
         return null
     }
 }
+
+
+export async function handlePlantWatering(id: number): Promise<SubmissionStatus>{
+    const wateredOn = Date.now()
+    try {
+        const updated = await waterPlant(id, wateredOn)
+        if(!updated){
+            return { status: false, description: "This plant could not be updated" }
+        }
+        const logged = await updatePlantCareLog(id, {
+            action: "water",
+            description: `Plant watered on ${new Date(wateredOn).toLocaleString()}`,
+            created_at: wateredOn
+        })
+        if(!logged){
+            return { status: true, description: "Plant watered, but it could not be added to the care log" }
+        }
+        return { status: true, description: "Plant watered!" }
+    } catch (error) {
+        console.error(error)
+        return { status: false, description: "Something went wrong watering the plant" }
+    }
+}
+
+
 
 export async function handleGetPlantContext(latitude: number, longitude:number):Promise<PlantContext | null>{
 const weatherAPIurl = "https://api.open-meteo.com/v1/forecast?"

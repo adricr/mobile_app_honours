@@ -87,7 +87,7 @@ export default function PlantRecommendations({plant, onRefetch}:PlantRecommendat
     :
     <></>
     return(
-    <Card>
+    <Card className="border-0">
         <Heading size="md" >Care Recommendations</Heading>
             {recommendations}
             {messagesGatheredOn}
