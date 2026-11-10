@@ -42,6 +42,8 @@ export default function PlantRecommendations({plant, onRefetch}:PlantRecommendat
             const gatheredOn = plant.current_status?.context?.gathered_on
             const contextIsFresh = gatheredOn != null && Date.now() - gatheredOn < FIVE_HOURS
             if(!contextIsFresh){
+                await updatePlantContext(plant.id, null)
+                onRefetch()
                 if(!networkState.isInternetReachable && plant.current_status.last_watered && plant.current_status.position){
                     const res = await assignRecommendations(current)
                     if(!res.ok)

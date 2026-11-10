@@ -107,7 +107,7 @@ export async function updatePlantCurrentStatus(id: number, currentCare: CurrentC
     return (await db.runAsync(`UPDATE plants SET current_status = ? WHERE id = ?`, JSON.stringify(currentCare), id)).changes
 }
 
-export async function updatePlantContext(id: number, context: PlantContext): Promise<CurrentCare | null> {
+export async function updatePlantContext(id: number, context: PlantContext|null): Promise<CurrentCare | null> {
     const current = await getPlantCurrentStatus(id)
     if (!current) {
         return null
