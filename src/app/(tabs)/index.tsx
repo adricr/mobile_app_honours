@@ -1,8 +1,9 @@
+import { Button, ButtonText } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
 import { getAllRecommendations, PlantRecommendationRow } from "@/src/data/repositories/recommendations";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -24,9 +25,9 @@ export default function Index() {
       <Heading>Tasks</Heading>
       {plants.length > 0 ?
         plants.map((plant)=>(
-          <Card className="" key={plant.id}>
-            <Text>{plant.name}{plant.species ? ` (${plant.species})` : ""}, located in {plant.collection_name}, needs watering</Text>
-          </Card>
+          <Button onPress={() => router.push({ pathname: '/plant/[id]', params: { id: String(plant.id) } })} variant="secondary" className="" key={plant.id}>
+            <ButtonText>{plant.name}{plant.species ? ` (${plant.species})` : ""}, located in {plant.collection_name}, needs watering</ButtonText>
+          </Button>
         ))
         :
         <Card>
