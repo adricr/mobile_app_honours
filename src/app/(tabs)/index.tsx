@@ -21,7 +21,7 @@ export default function Index() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Card>
+      <Card className="w-full">
       <Heading>Tasks</Heading>
       {plants.length > 0 ?
         plants.map((plant)=>(
