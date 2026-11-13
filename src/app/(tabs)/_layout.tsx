@@ -18,21 +18,12 @@ export default function TabLayout() {
         <Tabs.Screen 
             name="index" 
             options={{ 
-                title: 'Home',
+                title: 'Tasks',
                 tabBarIcon: ({color, focused}) => (
                 <Ionicons name={focused ? 'home-sharp' : 'home-outline'} color={color} size={24} />  
                 ),
             }} 
             />
-        <Tabs.Screen 
-            name="search" 
-            options={{ 
-                title: 'Search',
-                tabBarIcon: ({color, focused}) =>(
-                    <Ionicons name={focused ? 'search-sharp' : 'search-outline'} color={color} size={24}/>
-                ),
-       }} 
-       />
         <Tabs.Screen 
             name="collections" 
             options={{

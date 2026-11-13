@@ -24,7 +24,21 @@ export type Rule = {
     result: (f:Facts)=> Facts | Recommendation,
 }
 
+export type PlantRecommendationRow = {
+    id: number
+    name: string
+    species: string | null
+    collection_name: string
+    recommendation: PlantRecommendation | null
+}
 
+type RawRecRow = {
+    id: number
+    name: string
+    species: string | null
+    collection_name: string
+    care_recommendations: string | null
+}
 export async function updateRecommendation(id: number, care_recommendation: PlantRecommendation) : Promise<number|null> {
     return (await db.runAsync(`UPDATE plants SET care_recommendations = ? WHERE id = ?`,JSON.stringify(care_recommendation), id)).changes
 }
@@ -36,10 +50,31 @@ export async function getRecommendation(id : number) : Promise<PlantRecommendati
     return row?.care_recommendations ? JSON.parse(row.care_recommendations) : null
 }
 
+function parseRecommendation(raw: string | null): PlantRecommendation | null {
+    if (!raw) return null
+    try {
+        return JSON.parse(raw) as PlantRecommendation
+    } catch {
+        return null
+    }
+}
 
+export async function getAllRecommendations(): Promise<PlantRecommendationRow[]>{
+   const rows = await db.getAllAsync<RawRecRow>(
+        `SELECT p.id, p.name, k.species, c.name AS collection_name, p.care_recommendations
+        FROM plants as p
+        LEFT JOIN plant_catalogue as k ON p.species = k.id
+        INNER JOIN collections as c ON p.collection = c.id
+        WHERE  p.care_recommendations IS NOT NULL`
+    )
+    return rows.map(({ care_recommendations, ...rest }) => ({
+        ...rest,
+        recommendation: parseRecommendation(care_recommendations),
+    }))
+}
 
 export function isRecommendation(x: Facts | Recommendation): x is Recommendation {
-    return "needs_new_position" == x || "needs_watering" == x || "needs_higher_temps" == x || "needs_temporary_sun" == x
+    return "needs_new_position" == x || "needs_watering" == x || "needs_higher_temps" == x || "needs_temporary_sun" == x || "needs_context" == x || "needs_care_reqs" == x
 }
 // Returns facts or if there's some issue a string with the problem
 export function getFacts(currentStatus:CurrentCare, careRequirements:CareReq | null):Facts | string{
