@@ -3,7 +3,7 @@ import { Rule } from "../repositories/recommendations"
 export const rules:Rule[] =[
     {
         name: "low temps",
-        condition: f=> f.temp!= null && f.temp<f.hardiness,
+        condition: f=> f.temp!= null && f.hardiness != null && f.temp<f.hardiness,
         result: f=> {return "needs_higher_temps"}
 
     },
@@ -19,12 +19,12 @@ export const rules:Rule[] =[
     },
     {
         name: "Needs different position",
-        condition: f=> f.recommended_position && f.position != f.recommended_position,
+        condition: f=> f.recommended_position != null  && f.position != f.recommended_position,
         result: f=>{return "needs_new_position"}
     },
     {
         name: "Needs context",
-        condition: f=> !f.temp || !f.cloud_cover,
+        condition: f=> f.temp == null || f.cloud_cover ==  null,
         result: f=>{return "needs_context"}
     },
         {
