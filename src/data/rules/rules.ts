@@ -29,7 +29,7 @@ export const rules:Rule[] =[
     },
         {
         name: "Needs Care Reqs",
-        condition: f=> !f.recommended_position || !f.watering_interval || !f.hardiness,
+        condition: f=> f.recommended_position== null || f.watering_interval == null || f.hardiness == null,
         result: f=>{return "needs_care_reqs"}
     }
 ]
