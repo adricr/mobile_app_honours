@@ -23,7 +23,7 @@ export default function Index() {
       <CreateModal itemType="collection" modalOn={createCollection} setModalOn={setCreateCollection} onCreated={loadCollections} />
       <ContentList refreshCollections={loadCollections} contentArray={collections} contentType="collection"></ContentList>
       <ButtonGroup className="m-5 size-max">
-        <Button onPressOut={()=>{setCreateCollection(!createCollection)}} size="lg" className="rounded-full p-3.5">
+        <Button testID="createPlantButton" onPressOut={()=>{setCreateCollection(!createCollection)}} size="lg" className="rounded-full p-3.5">
           <Ionicons size={32} name="add-outline"></Ionicons>
         </Button>
       </ButtonGroup>

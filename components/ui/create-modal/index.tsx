@@ -27,7 +27,7 @@ export default function CreateModal({itemType, modalOn, setModalOn, onCreated, c
           <ModalContent>
             <ModalHeader>
               <Heading size="lg">Add a {itemType}!</Heading>
-              <Button className="rounded-full p-2" variant="outline" onPress={()=>{setModalOn(false)}}>
+              <Button testID="closeCreateCollectionModal" className="rounded-full p-2" variant="outline" onPress={()=>{setModalOn(false)}}>
                 <Ionicons size={16} color={"white"} name={"close-outline"}></Ionicons>
               </Button>
             </ModalHeader>

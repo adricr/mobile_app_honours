@@ -21,7 +21,7 @@ export default function AddCollection({setSubmitted, onCreated}:AddCollectionPro
                 <FormControlLabel>
                     <FormControlLabelText>Collection's Name</FormControlLabelText>
                 </FormControlLabel>
-                <Input>
+                <Input testID="createCollectionInput">
                     <InputField type="text" placeholder="Living Room" value={inputValue} onChangeText={(text)=>{setInputValue(text)}}/>
                 </Input>
                 <FormControlError>

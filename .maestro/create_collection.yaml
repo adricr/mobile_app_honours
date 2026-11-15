@@ -1,0 +1,17 @@
+# --- Configuration Section ---
+appId: com.anonymous.PlantCare
+name: Collection Creation Flow  
+---
+
+- launchApp                    # Launches the application
+- tapOn: "Plants"            # Interacts with the username field
+- tapOn:
+    id: createPlantButton
+- tapOn:
+    id: createCollectionInput
+- inputText: "Test"
+- hideKeyboard
+- tapOn: "Create!"
+- tapOn:
+    id: closeCreateCollectionModal
+- assertVisible: "Test"
