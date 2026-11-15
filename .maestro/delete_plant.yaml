@@ -1,0 +1,11 @@
+appId: com.anonymous.PlantCare
+name: Delete a plant from a collection
+---
+- runFlow: add_plant.yaml
+- assertVisible: "Maestro Plant"
+- tapOn:
+    id: deletePlantButton
+- assertVisible: "Are you sure you want to delete this plant?"
+- tapOn: "Delete"
+- assertNotVisible: "Maestro Plant"
+- assertVisible: "There's no plants!"

@@ -1,0 +1,17 @@
+appId: com.anonymous.PlantCare
+name: Delete a collection
+---
+- launchApp:
+    clearState: true
+- runFlow: create_collection.yaml
+- assertVisible: "Test"
+- tapOn:
+    id: deleteCollectionButton
+- assertVisible: "Are you sure you want to delete this collection?"
+- tapOn: "Cancel"
+- assertVisible: "Test"
+- tapOn:
+    id: deleteCollectionButton
+- tapOn: "Delete"
+- assertNotVisible: "Test"
+- assertVisible: "There's no collections!"

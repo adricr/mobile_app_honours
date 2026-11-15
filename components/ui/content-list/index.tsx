@@ -42,7 +42,7 @@ export default function ContentList({refreshCollections, contentArray, contentTy
                         >
                             <ButtonText>{item.name}</ButtonText>
                         </Button>
-                        <Button variant="destructive" className="basis-1/4" onPress={()=>{
+                        <Button testID="deleteCollectionButton" variant="destructive" className="basis-1/4" onPress={()=>{
                             setDeletetype({
                                 itemType: contentType,
                                 itemId: item.id
@@ -68,7 +68,7 @@ export default function ContentList({refreshCollections, contentArray, contentTy
                             
                             <ButtonText>{item.name? item.name : "Nameless Plant" }</ButtonText>
                         </Button>
-                        <Button onPress={()=>{
+                        <Button testID="deletePlantButton" onPress={()=>{
                             setDeletetype({
                                 itemType: contentType,
                                 itemId: item.id

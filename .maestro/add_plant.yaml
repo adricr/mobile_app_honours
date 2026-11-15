@@ -1,0 +1,43 @@
+appId: com.anonymous.PlantCare
+name: Add a plant manually to a collection
+---
+- launchApp:
+    clearState: true
+- runFlow: create_collection.yaml
+- tapOn: "Test"
+- assertVisible: "There's no plants!"
+- tapOn:
+    id: addPlantButton
+- assertVisible: "Add a plant!"
+# page 1
+- tapOn: "Select option"
+- scrollUntilVisible:
+    element: "Ficus Lyrata"
+- tapOn: "Ficus Lyrata"
+- tapOn: "Next"
+# page 2
+- tapOn: "My Plant"
+- inputText: "Maestro Plant"
+- hideKeyboard
+- tapOn: "Next"
+# page 3
+- tapOn: "e.g. 3"
+- inputText: "3"
+- hideKeyboard
+- tapOn: "Next"
+# page 4
+- tapOn: "No need for that!"
+- tapOn: "Next"
+# page 5
+- tapOn: "Full sun"
+- tapOn: "Next"
+# page 6
+- assertVisible: "Species: Ficus Lyrata"
+- assertVisible: "Name: Maestro Plant"
+- assertVisible: "Last watered: 3 days ago"
+- assertVisible: "Position: full sun"
+- tapOn: "Add plant!"
+- assertVisible: "Plant created succesfully!"
+- tapOn:
+    id: closeCreatePlantModal
+- assertVisible: "Maestro Plant"

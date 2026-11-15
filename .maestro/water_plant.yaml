@@ -1,0 +1,19 @@
+appId: com.anonymous.PlantCare
+name: Water a plant
+---
+- runFlow: add_plant.yaml
+- tapOn: "Maestro Plant"
+- assertVisible: "Ficus Lyrata"
+- scrollUntilVisible:
+    element: "First watering registered on.*"
+- scrollUntilVisible:
+    element: "I just watered Maestro Plant"
+    direction: UP
+- tapOn: "I just watered Maestro Plant"
+- assertVisible: "Watering Recorded correctly!"
+- scrollUntilVisible:
+    element: "Plant watered on.*"
+- back
+- tapOn: "Maestro Plant"
+- scrollUntilVisible:
+    element: "Plant watered on.*"

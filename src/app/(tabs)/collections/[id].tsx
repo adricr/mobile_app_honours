@@ -32,7 +32,7 @@ export default function CollectionScreen() {
       <CreateModal itemType="plant" modalOn={createCollection} setModalOn={setCreateCollection} onCreated={loadCollections} collectionId={Number(id)} />
       <ContentList refreshCollections={loadCollections} contentArray={plants} contentType="plant" />
       <ButtonGroup className="m-5 size-max">
-        <Button onPressOut={()=>{setCreateCollection(!createCollection)}} size="lg" className="rounded-full p-3.5">
+        <Button testID="addPlantButton" onPressOut={()=>{setCreateCollection(!createCollection)}} size="lg" className="rounded-full p-3.5">
           <Ionicons size={32} name="add-outline"></Ionicons>
         </Button>
       </ButtonGroup>

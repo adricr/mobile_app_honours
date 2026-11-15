@@ -54,7 +54,7 @@ export default function CreateModal({itemType, modalOn, setModalOn, onCreated, c
           <ModalContent>
             <ModalHeader>
               <Heading size="lg">Add a {itemType}!</Heading>
-              <Button className="rounded-full p-2" variant="outline" onPress={()=>{
+              <Button testID="closeCreatePlantModal" className="rounded-full p-2" variant="outline" onPress={()=>{
                 draftPlant.clear()
                 setModalOn(false)}}>
                 <Ionicons size={16} color={"white"} name={"close-outline"}></Ionicons>
