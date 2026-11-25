@@ -1,56 +1,128 @@
-# Welcome to your Expo app 👋
+# 🌿 Plant-Care
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A mobile app that helps you keep your houseplants alive. Snap a photo to identify a plant on-device, organise your plants into collections, log waterings, and get care recommendations based on each species' needs and the live weather where you are.
 
-## Get started
+Built with **Expo SDK 57**, **React Native 0.86**, and **Expo Router**. It was developed as an Honours project.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## Features
 
-2. Start the app
+- **📷 On-device plant identification.** A bundled image classifier (ExecuTorch `.pte` model) runs locally on the phone. No photos leave the device.
+- **🪴 Collections.** Group plants by room, balcony, or whatever suits you, then add plants manually from the catalogue or via the camera.
+- **💧 Care log.** Record waterings and see when each plant was last looked after.
+- **🧠 Rule-based recommender.** Compares each plant's care requirements with its current context and suggests actions:
+  - water it (overdue for its watering interval)
+  - move it (current position ≠ recommended light position)
+  - protect it from the cold (outside temperature below its hardiness)
+  - add supplemental light (heavy cloud cover for full-sun plants)
+- **🌦️ Live weather context.** Uses your location and the free [Open-Meteo](https://open-meteo.com/) API for temperature, humidity, and cloud cover.
+- **✅ Tasks tab.** One place that lists every plant that needs watering right now.
+- **💾 Offline-first storage.** Everything is stored locally in SQLite via `expo-sqlite`.
 
-   ```bash
-   npx expo start
-   ```
+### Supported species
 
-In the output, you'll find options to open the app in a
+The identification model and care database currently cover 11 species:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+| Species | Common name |
+| --- | --- |
+| *Ficus lyrata* | Fiddle-leaf fig |
+| *Monstera deliciosa* | Swiss cheese plant |
+| *Epipremnum aureum* | Golden pothos |
+| *Kalanchoe blossfeldiana* | Flaming Katy |
+| *Tradescantia pallida* | Purple heart |
+| *Ocimum basilicum* | Basil |
+| *Crassula ovata* | Jade plant |
+| *Spathiphyllum wallisii* | Peace lily |
+| *Haworthiopsis attenuata* | Zebra haworthia |
+| *Echeveria elegans* | Mexican snowball |
+| *Solanum lycopersicum* | Tomato |
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## How it works
 
-When you're ready, run:
+1. **Identify.** The photo is centre-cropped, decoded to RGB and classified by `model_large.pte` with ImageNet normalisation. See [id_plant.ts](src/logic/plants/id_system/id_plant.ts).
+2. **Gather facts.** The plant's care requirements (watering interval, light position, hardiness) come from the seeded catalogue, and the current weather comes from Open-Meteo.
+3. **Evaluate.** Each rule in [rules.ts](src/data/rules/rules.ts) is a `condition → result` pair. The [recommender](src/logic/recommendation_system/recommender.ts) fires the matching rules and turns them into readable messages.
+
+---
+
+## Getting started
+
+### Prerequisites
+
+- Node.js (LTS) and npm
+- Android Studio (emulator or physical device) and/or Xcode (iOS simulator, macOS only)
+
+> [!IMPORTANT]
+> This app uses native modules that are **not** in Expo Go (`react-native-executorch`, `react-native-blob-util`, and others), so you need a **development build**.
+
+### Install and run
 
 ```bash
-npm run reset-project
+# install dependencies
+npm install
+
+# build and launch a development build
+npm run android     # or: npm run ios
+
+# afterwards, just start the dev server
+npm start
+```
+---
+
+## Testing
+
+### Unit tests (Jest)
+
+The recommender is covered by unit tests for the happy path, single-ailment cases, missing context or care data, and boundary values (e.g. 0 % cloud cover, 0 °C hardiness).
+
+```bash
+npm test                 # watch mode
+npx jest                 # single run
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### End-to-end tests (Maestro)
 
-### Other setup steps
+UI flows live in [.maestro/](.maestro/) and use `testID`s on key components:
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+| Flow | What it covers |
+| --- | --- |
+| `create_collection.yaml` | Create a new collection |
+| `delete_collection.yaml` | Delete a collection |
+| `add_plant.yaml` | Add a plant manually from the catalogue |
+| `water_plant.yaml` | Water a plant and log it |
+| `delete_plant.yaml` | Remove a plant |
 
-## Learn more
+With a development build installed on a running emulator or device:
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+maestro test .maestro/                    # run every flow
+maestro test .maestro/add_plant.yaml      # run a single flow
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Lint and typecheck
 
-## Join the community
+```bash
+npm run lint
+npx tsc --noEmit
+```
 
-Join our community of developers creating universal apps.
+---
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Tech stack
+
+| Area | Tools |
+| --- | --- |
+| Framework | Expo SDK 57 |
+| UI | gluestack-ui, Uniwind (Tailwind CSS v4), Ionicons |
+| Storage | expo-sqlite |
+| ML | react-native-executorch, expo-image-manipulator, jpeg-js |
+| Testing | Jest (jest-expo), React Native Testing Library, Maestro |
+
+---
+
+## License
+
+See [LICENSE](LICENSE).

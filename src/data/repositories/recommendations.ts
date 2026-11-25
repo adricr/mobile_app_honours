@@ -58,7 +58,7 @@ function parseRecommendation(raw: string | null): PlantRecommendation | null {
         return null
     }
 }
-
+// gets the recs from all plants
 export async function getAllRecommendations(): Promise<PlantRecommendationRow[]>{
    const rows = await db.getAllAsync<RawRecRow>(
         `SELECT p.id, p.name, k.species, c.name AS collection_name, p.care_recommendations

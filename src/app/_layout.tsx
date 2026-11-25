@@ -47,7 +47,6 @@ export default function RootLayout() {
       }}
     >
       <GestureHandlerRootView style={{ flex: 1 }}>
-        {/* must be outside GluestackUIProvider: gluestack modals render at its overlay layer, so they only see providers above it */}
         <PlantDraftProvider>
           <GluestackUIProvider mode="dark">
             <Stack>

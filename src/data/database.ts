@@ -37,16 +37,6 @@ export async function initDb(db:SQLite.SQLiteDatabase) {
       FOREIGN KEY (collection) REFERENCES collections(id) ON UPDATE CASCADE
       
     );
-
-    CREATE TABLE IF NOT EXISTS care_logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        plant INTEGER NOT NULL,
-        date TEXT,
-        actions TEXT,
-        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (plant) REFERENCES plants(id) ON DELETE CASCADE
-        
-    );
     `);
 }
 
